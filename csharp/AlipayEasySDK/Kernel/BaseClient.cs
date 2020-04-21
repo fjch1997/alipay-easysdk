@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using Alipay.EasySDK.Kernel.Util;
 
 using Tea;
+using System.Security.Cryptography;
 
 namespace Alipay.EasySDK.Kernel
 {
@@ -97,10 +98,9 @@ namespace Alipay.EasySDK.Kernel
         /// <param name="systemParams">系统参数集合</param>
         /// <param name="bizParams">业务参数集合</param>
         /// <param name="textParams">其他额外文本参数集合</param>
-        /// <param name="privateKey">私钥</param>
         /// <returns>签名值的Base64串</returns>
         protected string _sign(Dictionary<string, string> systemParams, Dictionary<string, object> bizParams,
-            Dictionary<string, string> textParams, string privateKey)
+            Dictionary<string, string> textParams)
         {
             IDictionary<string, string> sortedMap = GetSortedMap(systemParams, bizParams, textParams);
 
@@ -117,8 +117,23 @@ namespace Alipay.EasySDK.Kernel
                 //去除尾巴上的&
                 content.Remove(content.Length - 1, 1);
             }
-
-            return Signer.Sign(content.ToString(), privateKey);
+            var privateKey = _getConfig("merchantPrivateKey");
+            if (!string.IsNullOrWhiteSpace(privateKey))
+            {
+                return Signer.Sign(content.ToString(), privateKey);
+            }
+            else
+            {
+                privateKey = _getConfig("merchantCertPath");
+                if (privateKey.StartsWith("cert:\\", StringComparison.OrdinalIgnoreCase))
+                {
+                    return Signer.Sign(content.ToString(), (RSA)CertEnvironment.GetCertificateFromCertificateStore(privateKey).PrivateKey);
+                }
+                else
+                {
+                    throw new InvalidOperationException("没有设置 merchantPrivateKey 以及 merchantCertPath。");
+                }
+            }
         }
 
         private IDictionary<string, string> GetSortedMap(Dictionary<string, string> systemParams,

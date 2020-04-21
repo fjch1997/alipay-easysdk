@@ -35,6 +35,16 @@ namespace Alipay.EasySDK.Kernel.Util
             }
         }
 
+        public string Sign(string content, RSA privateKey)
+        {
+            using (privateKey)
+            {
+                byte[] data = AlipayConstants.DEFAULT_CHARSET.GetBytes(content);
+                byte[] sign = privateKey.SignData(data, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
+                return Convert.ToBase64String(sign);
+            }
+        }
+
         /// <summary>
         /// 验证签名
         /// </summary>

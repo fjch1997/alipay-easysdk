@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using Org.BouncyCastle.X509;
 using Alipay.EasySDK.Kernel.Util;
+using System.Linq;
+using System.Security.Cryptography.X509Certificates;
+using X509Certificate = Org.BouncyCastle.X509.X509Certificate;
 
 namespace Alipay.EasySDK.Kernel
 {
@@ -48,13 +51,60 @@ namespace Alipay.EasySDK.Kernel
             this.RootCertContent = File.ReadAllText(alipayRootCertPath);
             this.RootCertSN = AntCertificationUtil.GetRootCertSN(RootCertContent);
 
-            X509Certificate merchantCert = AntCertificationUtil.ParseCert(File.ReadAllText(merchantCertPath));
+            X509Certificate merchantCert;
+            if (merchantCertPath.StartsWith("cert:\\", StringComparison.OrdinalIgnoreCase))
+            {
+                merchantCert = GetPublicKeyFromCertificateStore(merchantCertPath);
+            }
+            else
+            {
+                merchantCert = AntCertificationUtil.ParseCert(File.ReadAllText(merchantCertPath));
+            }
             this.MerchantCertSN = AntCertificationUtil.GetCertSN(merchantCert);
 
             X509Certificate alipayCert = AntCertificationUtil.ParseCert(File.ReadAllText(alipayCertPath));
             string alipayCertSN = AntCertificationUtil.GetCertSN(alipayCert);
             string alipayPublicKey = AntCertificationUtil.ExtractPemPublicKeyFromCert(alipayCert);
             CachedAlipayPublicKey[alipayCertSN] = alipayPublicKey;
+        }
+        public static X509Certificate2 GetCertificateFromCertificateStore(string path)
+        {
+            var pathSplit = path.Split('\\');
+            if (pathSplit.Length < 4)
+            {
+                throw new FormatException(path + " 不是有效的证书路径。");
+            }
+            X509Store store;
+            switch (pathSplit[1].ToLowerInvariant())
+            {
+                case "localmachine":
+                    store = new X509Store(pathSplit[2], StoreLocation.LocalMachine);
+                    break;
+                case "currentuser":
+                    store = new X509Store(pathSplit[2], StoreLocation.CurrentUser);
+                    break;
+                default:
+                    throw new FileNotFoundException(pathSplit[1] + " 不是有效的证书存储。");
+            }
+            store.Open(OpenFlags.ReadOnly);
+            using (store)
+            {
+                X509Certificate2Collection cert;
+                if (pathSplit[3] == "*")
+                {
+                    cert = store.Certificates;
+                }
+                else
+                {
+                    cert = store.Certificates.Find(X509FindType.FindByThumbprint, pathSplit[3], true);
+                }
+                return cert.Cast<X509Certificate2>().Where(c => c.Verify()).OrderByDescending(c => c.NotAfter).FirstOrDefault()
+                        ?? throw new FileNotFoundException("找不到 " + path);
+            }
+        }
+        private X509Certificate GetPublicKeyFromCertificateStore(string merchantCertPath)
+        {
+            return Org.BouncyCastle.Security.DotNetUtilities.FromX509Certificate(GetCertificateFromCertificateStore(merchantCertPath));
         }
 
         public string GetAlipayPublicKey(string sn)

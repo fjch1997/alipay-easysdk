@@ -83,7 +83,7 @@ namespace Alipay.EasySDK.Member.Identification
                     request_.Query = TeaConverter.merge<string>(
                         new Dictionary<string, string>()
                         {
-                            {"sign", _sign(systemParams, bizParams, textParams, _getConfig("merchantPrivateKey"))},
+                            {"sign", _sign(systemParams, bizParams, textParams)},
                         },
                         systemParams
                     );
@@ -189,7 +189,7 @@ namespace Alipay.EasySDK.Member.Identification
                     request_.Query = TeaConverter.merge<string>(
                         new Dictionary<string, string>()
                         {
-                            {"sign", _sign(systemParams, bizParams, textParams, _getConfig("merchantPrivateKey"))},
+                            {"sign", _sign(systemParams, bizParams, textParams)},
                         },
                         systemParams
                     );
@@ -290,7 +290,7 @@ namespace Alipay.EasySDK.Member.Identification
                     request_.Query = TeaConverter.merge<string>(
                         new Dictionary<string, string>()
                         {
-                            {"sign", _sign(systemParams, bizParams, textParams, _getConfig("merchantPrivateKey"))},
+                            {"sign", _sign(systemParams, bizParams, textParams)},
                         },
                         systemParams
                     );
@@ -391,7 +391,7 @@ namespace Alipay.EasySDK.Member.Identification
                     request_.Query = TeaConverter.merge<string>(
                         new Dictionary<string, string>()
                         {
-                            {"sign", _sign(systemParams, bizParams, textParams, _getConfig("merchantPrivateKey"))},
+                            {"sign", _sign(systemParams, bizParams, textParams)},
                         },
                         systemParams
                     );
@@ -453,7 +453,7 @@ namespace Alipay.EasySDK.Member.Identification
                 {"certify_id", certifyId},
             };
             Dictionary<string, string> textParams = new Dictionary<string, string>(){};
-            string sign = _sign(systemParams, bizParams, textParams, _getConfig("merchantPrivateKey"));
+            string sign = _sign(systemParams, bizParams, textParams);
             Dictionary<string, string> response = new Dictionary<string, string>()
             {
                 {"body", _generatePage("GET", systemParams, bizParams, textParams, sign)},

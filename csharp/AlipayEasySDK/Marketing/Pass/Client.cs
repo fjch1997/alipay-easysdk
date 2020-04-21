@@ -79,7 +79,7 @@ namespace Alipay.EasySDK.Marketing.Pass
                     request_.Query = TeaConverter.merge<string>(
                         new Dictionary<string, string>()
                         {
-                            {"sign", _sign(systemParams, bizParams, textParams, _getConfig("merchantPrivateKey"))},
+                            {"sign", _sign(systemParams, bizParams, textParams)},
                         },
                         systemParams
                     );
@@ -181,7 +181,7 @@ namespace Alipay.EasySDK.Marketing.Pass
                     request_.Query = TeaConverter.merge<string>(
                         new Dictionary<string, string>()
                         {
-                            {"sign", _sign(systemParams, bizParams, textParams, _getConfig("merchantPrivateKey"))},
+                            {"sign", _sign(systemParams, bizParams, textParams)},
                         },
                         systemParams
                     );
@@ -283,7 +283,7 @@ namespace Alipay.EasySDK.Marketing.Pass
                     request_.Query = TeaConverter.merge<string>(
                         new Dictionary<string, string>()
                         {
-                            {"sign", _sign(systemParams, bizParams, textParams, _getConfig("merchantPrivateKey"))},
+                            {"sign", _sign(systemParams, bizParams, textParams)},
                         },
                         systemParams
                     );
@@ -385,7 +385,7 @@ namespace Alipay.EasySDK.Marketing.Pass
                     request_.Query = TeaConverter.merge<string>(
                         new Dictionary<string, string>()
                         {
-                            {"sign", _sign(systemParams, bizParams, textParams, _getConfig("merchantPrivateKey"))},
+                            {"sign", _sign(systemParams, bizParams, textParams)},
                         },
                         systemParams
                     );
@@ -489,7 +489,7 @@ namespace Alipay.EasySDK.Marketing.Pass
                     request_.Query = TeaConverter.merge<string>(
                         new Dictionary<string, string>()
                         {
-                            {"sign", _sign(systemParams, bizParams, textParams, _getConfig("merchantPrivateKey"))},
+                            {"sign", _sign(systemParams, bizParams, textParams)},
                         },
                         systemParams
                     );
@@ -593,7 +593,7 @@ namespace Alipay.EasySDK.Marketing.Pass
                     request_.Query = TeaConverter.merge<string>(
                         new Dictionary<string, string>()
                         {
-                            {"sign", _sign(systemParams, bizParams, textParams, _getConfig("merchantPrivateKey"))},
+                            {"sign", _sign(systemParams, bizParams, textParams)},
                         },
                         systemParams
                     );
@@ -699,7 +699,7 @@ namespace Alipay.EasySDK.Marketing.Pass
                     request_.Query = TeaConverter.merge<string>(
                         new Dictionary<string, string>()
                         {
-                            {"sign", _sign(systemParams, bizParams, textParams, _getConfig("merchantPrivateKey"))},
+                            {"sign", _sign(systemParams, bizParams, textParams)},
                         },
                         systemParams
                     );
@@ -805,7 +805,7 @@ namespace Alipay.EasySDK.Marketing.Pass
                     request_.Query = TeaConverter.merge<string>(
                         new Dictionary<string, string>()
                         {
-                            {"sign", _sign(systemParams, bizParams, textParams, _getConfig("merchantPrivateKey"))},
+                            {"sign", _sign(systemParams, bizParams, textParams)},
                         },
                         systemParams
                     );
