@@ -79,6 +79,34 @@ namespace UnitTest.Payment.Common
             Assert.NotNull(response.HttpBody);
         }
 
+        [Test]
+        public void TestQueryRefund()
+        {
+            AlipayTradeFastpayRefundQueryResponse response = Factory.Payment.Common().QueryRefund(
+                "64628156-f784-4572-9540-485b7c91b850", "64628156-f784-4572-9540-485b7c91b850");
+
+            Assert.AreEqual(response.Code, "10000");
+            Assert.AreEqual(response.Msg, "Success");
+            Assert.IsNull(response.SubCode);
+            Assert.IsNull(response.SubMsg);
+            Assert.NotNull(response.HttpBody);
+            Assert.AreEqual(response.RefundAmount, "0.01");
+            Assert.AreEqual(response.TotalAmount, "0.01");
+        }
+
+        [Test]
+        public void TestDownloadBill()
+        {
+            AlipayDataDataserviceBillDownloadurlQueryResponse response = Factory.Payment.Common().DownloadBill("trade", "2020-01");
+
+            Assert.AreEqual(response.Code, "10000");
+            Assert.AreEqual(response.Msg, "Success");
+            Assert.IsNull(response.SubCode);
+            Assert.IsNull(response.SubMsg);
+            Assert.NotNull(response.HttpBody);
+            Assert.IsTrue(response.BillDownloadUrl.StartsWith("http://dwbillcenter.alipay.com/"));
+        }
+
         private string CreateNewAndReturnOutTradeNo()
         {
             return Factory.Payment.Common().Create("iPhone6 16G", Guid.NewGuid().ToString(),

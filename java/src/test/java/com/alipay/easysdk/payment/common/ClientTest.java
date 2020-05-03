@@ -1,15 +1,20 @@
 package com.alipay.easysdk.payment.common;
 
-import com.alipay.easysdk.TestAccount;
+import com.alipay.easysdk.TestAccount.Mini;
 import com.alipay.easysdk.factory.Factory;
+import com.alipay.easysdk.kernel.BaseClient.Config;
+import com.alipay.easysdk.payment.common.models.AlipayDataDataserviceBillDownloadurlQueryResponse;
 import com.alipay.easysdk.payment.common.models.AlipayTradeCancelResponse;
 import com.alipay.easysdk.payment.common.models.AlipayTradeCloseResponse;
 import com.alipay.easysdk.payment.common.models.AlipayTradeCreateResponse;
+import com.alipay.easysdk.payment.common.models.AlipayTradeFastpayRefundQueryResponse;
 import com.alipay.easysdk.payment.common.models.AlipayTradeQueryResponse;
 import com.alipay.easysdk.payment.common.models.AlipayTradeRefundResponse;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -21,14 +26,14 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public class ClientTest {
     @Before
     public void setUp() {
-        Factory.setOptions(TestAccount.Mini.CONFIG);
+        Factory.setOptions(Mini.CONFIG);
     }
 
     @Test
     public void testCreate() throws Exception {
         String outTradeNo = UUID.randomUUID().toString();
         AlipayTradeCreateResponse response = Factory.Payment.Common().create("iPhone6 16G",
-                outTradeNo, "88.88", "2088002656718920");
+                outTradeNo, "0.01", "2088002656718920");
 
         assertThat(response.code, is("10000"));
         assertThat(response.msg, is("Success"));
@@ -76,13 +81,41 @@ public class ClientTest {
 
     @Test
     public void testRefund() throws Exception {
-        AlipayTradeRefundResponse response = Factory.Payment.Common().refund(createNewAndReturnOutTradeNo(), "0.01");
+        AlipayTradeRefundResponse response = Factory.Payment.Common().refund(
+                "64628156-f784-4572-9540-485b7c91b850", "0.01");
 
-        assertThat(response.code, is("40004"));
-        assertThat(response.msg, is("Business Failed"));
-        assertThat(response.subCode, is("ACQ.TRADE_STATUS_ERROR"));
-        assertThat(response.subMsg, is("交易状态不合法"));
+        assertThat(response.code, is("10000"));
+        assertThat(response.msg, is("Success"));
+        assertThat(response.subCode, is(nullValue()));
+        assertThat(response.subMsg, is(nullValue()));
         assertThat(response.httpBody, not(nullValue()));
+        assertThat(response.refundFee, is("0.01"));
+    }
+
+    @Test
+    public void testQueryRefund() throws Exception {
+        AlipayTradeFastpayRefundQueryResponse response = Factory.Payment.Common().queryRefund(
+                "64628156-f784-4572-9540-485b7c91b850", "64628156-f784-4572-9540-485b7c91b850");
+
+        assertThat(response.code, is("10000"));
+        assertThat(response.msg, is("Success"));
+        assertThat(response.subCode, is(nullValue()));
+        assertThat(response.subMsg, is(nullValue()));
+        assertThat(response.httpBody, not(nullValue()));
+        assertThat(response.refundAmount, is("0.01"));
+        assertThat(response.totalAmount, is("0.01"));
+    }
+
+    @Test
+    public void testDownloadBill() throws Exception {
+        AlipayDataDataserviceBillDownloadurlQueryResponse response = Factory.Payment.Common().downloadBill("trade", "2020-01");
+
+        assertThat(response.code, is("10000"));
+        assertThat(response.msg, is("Success"));
+        assertThat(response.subCode, is(nullValue()));
+        assertThat(response.subMsg, is(nullValue()));
+        assertThat(response.httpBody, not(nullValue()));
+        assertThat(response.billDownloadUrl.startsWith("http://dwbillcenter.alipay.com/"), is(true));
     }
 
     private String createNewAndReturnOutTradeNo() throws Exception {
