@@ -96,10 +96,9 @@ namespace Alipay.EasySDK.Kernel
                 }
                 else
                 {
-                    cert = store.Certificates.Find(X509FindType.FindByThumbprint, pathSplit[3], true);
+                    cert = store.Certificates.Find(X509FindType.FindByThumbprint, pathSplit[3], false);
                 }
-                return cert.Cast<X509Certificate2>().Where(c => c.Verify()).OrderByDescending(c => c.NotAfter).FirstOrDefault()
-                        ?? throw new FileNotFoundException("找不到 " + path);
+                return cert.Cast<X509Certificate2>().FirstOrDefault() ?? throw new FileNotFoundException("找不到 " + path);
             }
         }
         private X509Certificate GetPublicKeyFromCertificateStore(string merchantCertPath)
